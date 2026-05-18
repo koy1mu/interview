@@ -1,0 +1,287 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "Task Manager API",
+		"description": "A simple task management API",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{ "url": "http://localhost:3000", "description": "Local development" }
+	],
+	"paths": {
+		"/health": {
+			"get": {
+				"summary": "Health check",
+				"tags": ["System"],
+				"responses": {
+					"200": {
+						"description": "Service is healthy",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": { "type": "string", "example": "ok" }
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/tasks": {
+			"get": {
+				"summary": "List all tasks",
+				"tags": ["Tasks"],
+				"responses": {
+					"200": {
+						"description": "List of tasks",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/Task" }
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "Create a new task",
+				"tags": ["Tasks"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/CreateTaskInput" }
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Task created",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/Task" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/tasks/{id}": {
+			"get": {
+				"summary": "Get a task by ID",
+				"tags": ["Tasks"],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Task found",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/Task" }
+							}
+						}
+					},
+					"404": { "description": "Task not found" }
+				}
+			},
+			"post": {
+				"summary": "Update a task",
+				"tags": ["Tasks"],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/UpdateTaskInput" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Task updated",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/Task" }
+							}
+						}
+					},
+					"404": { "description": "Task not found" }
+				}
+			},
+			"delete": {
+				"summary": "Delete a task",
+				"tags": ["Tasks"],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"204": { "description": "Task deleted" },
+					"404": { "description": "Task not found" }
+				}
+			}
+		},
+		"/api/tasks/quote": {
+			"post": {
+				"summary": "Create a task from a random quote",
+				"description": "Fetches a random quote from the ZenQuotes API and creates a task with it",
+				"tags": ["Tasks"],
+				"responses": {
+					"201": {
+						"description": "Task created from quote",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/Task" }
+							}
+						}
+					},
+					"500": { "description": "Quote API unavailable" }
+				}
+			}
+		},
+		"/api/categories": {
+			"get": {
+				"summary": "List all categories",
+				"tags": ["Categories"],
+				"responses": {
+					"200": {
+						"description": "List of categories",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/Category" }
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "Create a new category",
+				"tags": ["Categories"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/CreateCategoryInput" }
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Category created",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/Category" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/categories/{id}": {
+			"delete": {
+				"summary": "Delete a category",
+				"tags": ["Categories"],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"204": { "description": "Category deleted" },
+					"404": { "description": "Category not found" }
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Task": {
+				"type": "object",
+				"properties": {
+					"_id": { "type": "string", "example": "507f1f77bcf86cd799439011" },
+					"title": { "type": "string", "example": "Buy groceries" },
+					"description": { "type": "string", "example": "Milk, eggs, bread" },
+					"status": {
+						"type": "string",
+						"enum": ["pending", "in-progress", "done"],
+						"example": "pending"
+					},
+					"categoryId": {
+						"type": "string",
+						"example": "507f1f77bcf86cd799439012"
+					},
+					"createdAt": { "type": "string", "format": "date-time" },
+					"updatedAt": { "type": "string", "format": "date-time" }
+				}
+			},
+			"CreateTaskInput": {
+				"type": "object",
+				"required": ["title", "description"],
+				"properties": {
+					"title": { "type": "string", "example": "Buy groceries" },
+					"description": { "type": "string", "example": "Milk, eggs, bread" },
+					"categoryId": {
+						"type": "string",
+						"example": "507f1f77bcf86cd799439012"
+					}
+				}
+			},
+			"UpdateTaskInput": {
+				"type": "object",
+				"properties": {
+					"title": { "type": "string" },
+					"description": { "type": "string" },
+					"status": {
+						"type": "string",
+						"enum": ["pending", "in-progress", "done"]
+					},
+					"categoryId": { "type": "string" }
+				}
+			},
+			"Category": {
+				"type": "object",
+				"properties": {
+					"_id": { "type": "string", "example": "507f1f77bcf86cd799439012" },
+					"name": { "type": "string", "example": "Work" },
+					"color": { "type": "string", "example": "#3498db" }
+				}
+			},
+			"CreateCategoryInput": {
+				"type": "object",
+				"required": ["name", "color"],
+				"properties": {
+					"name": { "type": "string", "example": "Work" },
+					"color": { "type": "string", "example": "#3498db" }
+				}
+			}
+		}
+	}
+}

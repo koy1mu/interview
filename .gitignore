@@ -1,0 +1,42 @@
+# Editors / IDEs
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.history
+
+# Packages
+**/.npmrc
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+**/coverage
+/.reports
+junit*.xml
+
+# Build
+dist/
+.next/
+test-report.json
+package.tar.gz
+
+# Dotenv
+.env
+
+# OS
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# SBOM for OWASP DT
+sbom.json
+
+# terraform
+.terraform
+terraform.tfvars
+/terraform/datadog/terraform.tfstate.backup
